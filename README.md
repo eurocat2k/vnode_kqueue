@@ -157,3 +157,8 @@ The output will be the same as before:
   [I] Closing kqueue handler 3
   Exiting...
 ```
+<div style="color:red; background:lightgrey">
+<code>
+I want to have this text in red on grey.
+</code>
+</div>
