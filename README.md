@@ -138,3 +138,22 @@ The output will be the same as before:
   Event 4 occurred.  Filter -4, flags 32, filter flags NOTE_CLOSE, filter data 0, path data.txt
   Event 4 occurred.  Filter -4, flags 32, filter flags NOTE_DELETE, filter data 0, path data.txt
 ```
+### Exit from monitor application: press Ctrl+C
+```
+  %./filemonitor data.txt
+  Event 4 occurred.  Filter -4, flags 32, filter flags NOTE_OPEN, filter data 0, path data.txt
+  Event 4 occurred.  Filter -4, flags 32, filter flags NOTE_CLOSE, filter data 0, path data.txt
+  Event 4 occurred.  Filter -4, flags 32, filter flags NOTE_ATTRIB|NOTE_OPEN, filter data 0, path data.txt
+  Event 4 occurred.  Filter -4, flags 32, filter flags NOTE_WRITE|NOTE_EXTEND, filter data 0, path data.txt
+  Event 4 occurred.  Filter -4, flags 32, filter flags NOTE_CLOSE_WRITE, filter data 0, path data.txt
+  Event 4 occurred.  Filter -4, flags 32, filter flags NOTE_RENAME, filter data 0, path data.txt
+  Event 4 occurred.  Filter -4, flags 32, filter flags NOTE_OPEN, filter data 0, path data.txt
+  Event 4 occurred.  Filter -4, flags 32, filter flags NOTE_CLOSE, filter data 0, path data.txt
+  Event 4 occurred.  Filter -4, flags 32, filter flags NOTE_OPEN, filter data 0, path data.txt
+  Event 4 occurred.  Filter -4, flags 32, filter flags NOTE_CLOSE, filter data 0, path data.txt
+  Event 4 occurred.  Filter -4, flags 32, filter flags NOTE_DELETE, filter data 0, path data.txt
+  ^CReceived UNIX signal via kqueue: 2
+  [I] Closing monitoring descriptor 4
+  [I] Closing kqueue handler 3
+  Exiting...
+```
