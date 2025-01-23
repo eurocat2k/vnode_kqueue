@@ -149,7 +149,7 @@ void unix_signal_handler(int sig) {
     switch (sig) {
         case SIGINT:
             if (event_fd != -1) {
-                printf("[I] Closing monitoring descriptor \033[1;36m%d\033[0m\n", event_fd);
+                printf("[I] Closing monitored descriptor \033[1;36m%d\033[0m\n", event_fd);
                 close(event_fd);
             }
             if (kq != -1) {
