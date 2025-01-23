@@ -12,8 +12,8 @@
 #include <signal.h>
  
 // constants 
-#define NUM_EVENT_SLOTS 1
-#define NUM_EVENT_FDS 1
+#define NUM_EVENT_SLOTS 2
+#define NUM_EVENT_FDS 2
 
 // SIGNAL context
 struct context {
@@ -34,6 +34,7 @@ extern int main(int argc, char *argv[]) {
     void *user_data;
     struct timespec timeout;
     unsigned int vnode_events;
+    struct context ctx = {.handler = unix_signal_handler };
  
     if (argc != 2) {
         fprintf(stderr, "Usage: monitor <file_path>\n");
@@ -54,6 +55,14 @@ extern int main(int argc, char *argv[]) {
         fprintf(stderr, "The file %s could not be opened for monitoring.  Error was %s.\n", path, strerror(errno));
         exit(-1);
     }
+
+    sigset_t mask;
+	sigemptyset(&mask);
+	sigaddset(&mask, SIGINT);
+	sigprocmask(SIG_BLOCK, &mask, NULL);
+
+    EV_SET(&event_data[0], SIGINT, EVFILT_SIGNAL, EV_ADD | EV_ENABLE, 0, 0, &ctx);
+	assert(0 == kevent(kq, event_data, 1, NULL, 0, NULL));
  
     /*
        The address in user_data will be copied into a field in the
@@ -86,13 +95,21 @@ extern int main(int argc, char *argv[]) {
             break;
         }
         if (event_count) {
-            printf("Event %" PRIdPTR " occurred.  Filter %d, flags %d, filter flags %s, filter data %" PRIdPTR ", path %s\n",
-                event_data[0].ident,
-                event_data[0].filter,
-                event_data[0].flags,
-                flagstring(event_data[0].fflags),
-                event_data[0].data,
-                (char *)event_data[0].udata);
+            for (int i = 0; i < event_count; i += 1) {
+                if (event_data[i].filter == EVFILT_SIGNAL) {
+                    int sig = event_data[i].ident;
+                    ctx.handler(sig);
+                } else if (event_data[i].filter == EVFILT_VNODE) {
+                    printf("Event %" PRIdPTR " occurred.  Filter %d, flags %d, filter flags %s, filter data %" PRIdPTR ", path %s\n",
+                        event_data[i].ident,
+                        event_data[i].filter,
+                        event_data[i].flags,
+                        flagstring(event_data[i].fflags),
+                        event_data[i].data,
+                        (char *)event_data[i].udata
+                    );
+                }
+            }
         }
         // } else {
         //     printf("No event.\n");
